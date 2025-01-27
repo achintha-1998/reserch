@@ -1,0 +1,9 @@
+Irradiance (W/m²),Temperature (°C),Voltage (V),Current (A),Power (W),Fault Condition
+1000,25,600,8.0,4800,Normal
+800,30,580,7.5,4350,Normal
+500,20,550,4.5,2475,Normal
+1000,25,0,0.0,0,Open Circuit
+900,28,100,0.5,50,Short Circuit
+600,22,520,6.0,3120,Shading (Partial)
+1000,25,450,6.0,2700,Degradation (50%)
+1000,25,580,7.8,4524,Normal
