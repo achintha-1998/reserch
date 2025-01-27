@@ -1,4 +1,3 @@
-
 import streamlit as st
 import random
 import numpy as np
@@ -18,7 +17,6 @@ scaler = StandardScaler()
 local_model = None
 SERVER_URL = "http://your-server-url.com/update_global_model"  # Replace with actual server URL
 
-
 # Simulate real-time sensor data
 def get_sensor_data():
     voltage = random.uniform(300, 600)
@@ -28,23 +26,21 @@ def get_sensor_data():
     power = voltage * current
     return voltage, current, irradiance, temperature, power
 
-
 # Load the global model
 def load_global_model():
-    global_model_path = "global_model.pkl"
+    global_model_path = "MultipleFiles/global_model.pkl"
     if os.path.exists(global_model_path):
         return joblib.load(global_model_path)
     else:
         st.error("Global model not found. Please ensure 'global_model.pkl' is available.")
         return None
 
-
 # Train the local model
 def train_local_model():
     global local_model, scaler
-    dataset_path = "PV_simulated_data.csv"
+    dataset_path = "MultipleFiles/PV_simulated_data (2).csv"
     if not os.path.exists(dataset_path):
-        st.error("Dataset not found. Please ensure 'PV_simulated_data.csv' is available.")
+        st.error("Dataset not found. Please ensure 'PV_simulated_data (2).csv' is available.")
         return None
 
     # Load and preprocess the dataset
@@ -60,14 +56,13 @@ def train_local_model():
     local_model.fit(X_scaled, y)
 
     # Save the trained local model
-    joblib.dump(local_model, "local_model.pkl")
+    joblib.dump(local_model, "MultipleFiles/local_model.pkl")
     st.success("Local model trained and saved successfully!")
 
     # Send local model weights to the server for global aggregation
     send_model_to_server(local_model)
 
     return local_model
-
 
 # Send local model updates to the server
 def send_model_to_server(local_model):
@@ -81,13 +76,11 @@ def send_model_to_server(local_model):
             else:
                 st.error(f"Failed to send the model to the server. Error: {response.text}")
 
-
 # Generate SHAP explanations
 def explain_shap(local_model, input_data):
     explainer = shap.TreeExplainer(local_model)
     shap_values = explainer.shap_values(input_data)
     return shap_values
-
 
 # Update sensor data and make predictions
 def update_sensor_data():
@@ -119,12 +112,7 @@ def update_sensor_data():
     plt.savefig(temp_file.name)
     plt.close()
 
-    return f"Voltage: {voltage}V
-Current: {current}A
-Irradiance: {irradiance}W/m²
-Temperature: {temperature}°C
-Power: {power}W",         fault_status, temp_file.name
-
+    return f"Voltage: {voltage}V\nCurrent: {current}A\nIrradiance: {irradiance}W/m²\nTemperature: {temperature}°C\nPower: {power}W", fault_status, temp_file.name
 
 # Streamlit app UI
 def app():
@@ -148,15 +136,14 @@ def app():
     if shap_plot:
         st.image(shap_plot)
 
-
 # Run the app
 if __name__ == "__main__":
-    if not os.path.exists("local_model.pkl"):
+    if not os.path.exists("MultipleFiles/local_model.pkl"):
         train_local_model()  # Ensure local model and scaler are initialized
     else:
-        local_model = joblib.load("local_model.pkl")
+        local_model = joblib.load("MultipleFiles/local_model.pkl")
         scaler = StandardScaler()  # Re-initialize scaler
-        dataset_path = "PV_simulated_data.csv"
+        dataset_path = "MultipleFiles/PV_simulated_data (2).csv"
         if os.path.exists(dataset_path):
             df = pd.read_csv(dataset_path)
             X = df[["Voltage (V)", "Current (A)", "Irradiance (W/m²)", "Temperature (°C)", "Power (W)"]]
